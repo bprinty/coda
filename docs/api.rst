@@ -2,29 +2,27 @@ API
 ===
 
 
-Database Connection
--------------------
+Configuration
+-------------
 
 .. autoclass:: coda.db.Session
     :members:
 
+.. autofunction:: coda.db.options
 
-File Objects
-------------
+
+Files and Collections
+---------------------
 
 .. autoclass:: coda.File
     :members:
-
-
-Aggregation
------------
 
 .. autoclass:: coda.Collection
     :members:
 
 
-File Operations
----------------
+Querying
+--------
 
 .. autofunction:: coda.find
 .. autofunction:: coda.find_one

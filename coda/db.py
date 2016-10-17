@@ -14,7 +14,8 @@ import pymongo
 from gems import composite
 from multipledispatch import dispatch
 
-from coda.objects import File, Collection
+from coda.objects import File as BaseFile
+from coda.objects import Collection
 from coda.utils import DocRequire, keywords
 
 
@@ -68,6 +69,9 @@ def options(*args, **kwargs):
 
     Args:
         kwargs (dict): List of arbitrary config items to set.
+
+    Examples:
+        >>> coda.options({'host': 'localhost'})
     """
     global session, __default_config__, __user_config__
     with open(__default_config__, 'r') as cfig:
@@ -82,11 +86,32 @@ def options(*args, **kwargs):
     except TypeError:
         raise AssertionError('Something is wrong with your coda configuration'
                              ' -- check your config file for valid parameters.')
-    return config
+    return config.json()
 
 
 session = Session()
 options()
+
+
+# extensions
+# ----------
+class File(BaseFile):
+    """
+    File object extended with database querying functionality.
+    """
+
+    @property
+    def metadata(self):
+        """
+        Proxy for returning metadata -- if the file exists in the database,
+        then pull metadata for it if none already exists. If metadata exists
+        for the object, then return that.
+        """
+        if len(self._metadata) == 0:
+            obj = find_one({'path': self.path})
+            if obj is not None:
+                self._metadata = obj._metadata
+        return self._metadata
 
 
 # searching

@@ -6,7 +6,7 @@ import os
 
 from coda.db import add, find, find_one, delete
 from coda.db import options
-from coda.objects import File, Collection
+from coda.db import File, Collection
 
 
 # metadata

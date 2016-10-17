@@ -58,11 +58,8 @@ class File(object):
     @property
     def metadata(self):
         """
-        If no metadata is initially specified for a file, query the database
-        for metadata about the specified file.
+        Proxy for returning metadata about specified file.
         """
-        if len(self._metadata) == 0:
-            print 'query!'
         return self._metadata
 
     def __cmp__(self, other):

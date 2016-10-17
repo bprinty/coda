@@ -40,11 +40,19 @@ class TestFile(unittest.TestCase):
         return
 
     def test_metadata(self):
+        # test metadata setting
         one = os.path.join(__resources__, 'simple', 'one.txt')
         fi = coda.File(one, metadata={'one': 1})
         self.assertEqual(fi.one, 1)
         fi.two = 2
         self.assertEqual(fi.metadata.two, 2)
+
+        # test implicit querying for files already in the database
+        coda.add(fi)
+        fi2 = coda.File(one)
+        self.assertEqual(fi.one, 1)
+        self.assertEqual(fi.metadata.one, 1)
+        coda.delete(fi)
         return
 
     def test_operators(self):
@@ -81,7 +89,6 @@ class TestFile(unittest.TestCase):
 
 # collection
 # ----------
-
 class TestCollection(unittest.TestCase):
 
     def test_properties(self):
