@@ -150,7 +150,7 @@ class Collection(object):
             for key in kwargs:
                 self.files[idx].metadata[key] = kwargs[key]
         for key in kwargs:
-            self.metadata[key] = kwargs[key]
+            self._metadata[key] = kwargs[key]
         return
 
     def filter(self, func=lambda x: True):
@@ -163,7 +163,7 @@ class Collection(object):
         return Collection(filter(func, self.files))
 
     def __str__(self):
-        return '\n'.join(map(str, self.files))
+        return str(map(str, self.files))
 
     def __cmp__(self, other):
         return cmp(len(self.files), len(other.files))
