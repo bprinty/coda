@@ -44,7 +44,7 @@ class TestFile(unittest.TestCase):
         fi = coda.File(one, metadata={'one': 1})
         self.assertEqual(fi.one, 1)
         fi.two = 2
-        self.assertEqual(fi.two, 2)
+        self.assertEqual(fi.metadata.two, 2)
         return
 
     def test_operators(self):
@@ -168,9 +168,9 @@ class TestCollection(unittest.TestCase):
         self.assertEqual(cl.metadata.newerproperty, 'newervalue')
         self.assertEqual(cl.newerproperty, 'newervalue')
         self.assertEqual(map(lambda x: x.newerproperty, cl), ['newervalue']*len(cl))
-        # # adding via setattr on class
-        # cl.newestproperty = 'newestvalue'
-        # self.assertEqual(cl.metadata.newestproperty, 'newestvalue')
-        # self.assertEqual(cl.newestproperty, 'newestvalue')
-        # self.assertEqual(map(lambda x: x.newestproperty, cl), ['newestvalue']*len(cl))
+        # adding via setattr on class
+        cl.newestproperty = 'newestvalue'
+        self.assertEqual(cl.metadata.newestproperty, 'newestvalue')
+        self.assertEqual(cl.newestproperty, 'newestvalue')
+        self.assertEqual(map(lambda x: x.newestproperty, cl), ['newestvalue']*len(cl))
         return

@@ -129,12 +129,18 @@ def find_one(query):
 
 # database update methods
 # -----------------------
-@dispatch(File)
 def add(obj):
     """
-    Add file object to database.
+    Add file object or collection object to database.
+
+    Args:
+        obj (File, Collection): File or collection of files to delete.
     """
     global session
+    if isinstance(obj, (Collection, list, tuple)):
+        return map(add, obj)
+    if not isinstance(obj, File):
+        raise TypeError('unsupported type for add {}'.format(type(obj)))
     ret = session.db.files.find_one({'path': obj.path})
     dat = obj.metadata.json()
     dat['path'] = obj.path
@@ -144,23 +150,17 @@ def add(obj):
         return session.db.files.update({'path': dat['path']}, dat)
 
 
-@dispatch(Collection)
-def add(obj):
-    """
-    Add collection object to database.
-    """
-    return map(add, obj)
-
-
-@dispatch(File)
 def delete(obj):
+    """
+    Delete file or collection of files from database.
+
+    Args:
+        obj (File, Collection): File or collection of files to delete.
+    """
     global session
+    if isinstance(obj, (Collection, list, tuple)):
+        return map(delete, obj)
+    if not isinstance(obj, File):
+        raise TypeError('unsupported type for delete {}'.format(type(obj)))
     return session.db.files.delete_many({'path': obj.path})
-
-
-@dispatch(Collection)
-def delete(obj):
-    return map(delete, obj)
-
-
 

@@ -5,7 +5,7 @@ API
 Database Connection
 -------------------
 
-.. autoclass:: coda.Session
+.. autoclass:: coda.db.Session
     :members:
 
 
@@ -26,6 +26,7 @@ Aggregation
 File Operations
 ---------------
 
-.. autofunction:: coda.search
+.. autofunction:: coda.find
+.. autofunction:: coda.find_one
 .. autofunction:: coda.add
-.. autofunction:: coda.update
+.. autofunction:: coda.delete

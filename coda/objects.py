@@ -31,11 +31,29 @@ class File(object):
         assert os.path.exists(path), 'Specified file path does not exist!'
         assert not os.path.isdir(path), 'Specified file is not a file! Use the Collection object for a directory.'
         self.path = path
-        self.location = os.path.dirname(path)
-        self.name = os.path.basename(path)
-        self.extension = '.' + self.name.split('.')[-1]
         self._metadata = composite(metadata)
         return
+
+    @property
+    def name(self):
+        """
+        Return basename for file.
+        """
+        return os.path.basename(self.path)
+
+    @property
+    def location(self):
+        """
+        Return dirname for file.
+        """
+        return os.path.dirname(self.path)
+
+    @property
+    def extension(self):
+        """
+        Return extension for file.
+        """
+        return '.' + self.name.split('.')[-1]
 
     @property
     def metadata(self):
@@ -82,9 +100,12 @@ class File(object):
     def __getitem__(self, name):
         return self.metadata[name]
 
-    # def __setattr__(self, name, value):
-    #     self._metadata[name] = value
-    #     return
+    def __setattr__(self, name, value):
+        if name not in ['_metadata', 'path']:
+            self.metadata[name] = value
+        else:
+            super(File, self).__setattr__(name, value)
+        return
 
 
 class Collection(object):
@@ -191,6 +212,9 @@ class Collection(object):
     def __getitem__(self, idx):
         return self.files[idx]
 
-    # def __setattr__(self, name, value):
-    #     self.add_metadata({name: value})
-    #     return
+    def __setattr__(self, name, value):
+        if name not in ['_metadata', 'files']:
+            self.add_metadata({name: value})
+        else:
+            super(Collection, self).__setattr__(name, value)
+        return
