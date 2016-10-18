@@ -163,7 +163,7 @@ class Collection(object):
         return Collection(filter(func, self.files))
 
     def __str__(self):
-        return str(map(str, self.files))
+        return '\n'.join(map(str, self.files))
 
     def __cmp__(self, other):
         return cmp(len(self.files), len(other.files))
