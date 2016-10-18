@@ -161,6 +161,13 @@ class Collection(object):
         return
 
     @property
+    def filelist(self):
+        """
+        Return list with full paths to files in collection.
+        """
+        return map(lambda x: x.path, self.files)
+
+    @property
     def metadata(self):
         """
         If no metadata is initially specified for a file, query the database

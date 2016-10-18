@@ -105,6 +105,7 @@ class TestCollection(unittest.TestCase):
         self.assertEqual(cl.files[2].path, three)
         self.assertEqual(cl.metadata.filetype, 'text')
         self.assertEqual(cl.filetype, 'text')
+        self.assertEqual(cl.filelist, [one, two, three])
         with self.assertRaises(AttributeError):
             self.assertEqual(cl.metadata.content, None)
         return
