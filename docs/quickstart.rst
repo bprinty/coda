@@ -214,10 +214,15 @@ Untracking Files
 ----------------
 
 To untrack files and delete them from the ``coda`` database, the :func:`coda.delete` method is used. The
-:func:`coda.delete` takes a :class:`coda.File` with metadata or a :class:`coda.Collection` object, and
+:func:`coda.delete` takes a :class:`coda.File` or a :class:`coda.Collection` object, and
 deletes all instances of associated files in the database.
 
 .. code-block:: python
+
+    >>> cl = coda.find({'group': 'dev'})
+    >>> 
+    >>> # delete single file object
+    >>> coda.delete(cl.files[0])
 
 
 
