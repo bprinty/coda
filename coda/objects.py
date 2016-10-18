@@ -62,21 +62,44 @@ class File(object):
         """
         return self._metadata
 
+    def __str__(self):
+        """
+        Return string representation for file (file path).
+        """
+        return self.path
+
     def __cmp__(self, other):
+        """
+        Comparison operator. Compares left and right file
+        paths alphanumerically.
+        """
         if not isinstance(other, File):
             TypeError('unsupported comparison type(s) \'{}\' and \'{}\''.format(type(self), type(other)))
         return cmp(self.path, other.path)
 
-    def __str__(self):
-        return self.path
-
-    def __eq__(self, other):
-        if isinstance(other, File):
-            return self.path == other.path
-        else:
-            return False
-
     def __add__(self, other):
+        """
+        Addition operator for files or collections. Using this, you can
+        add File objects to other File objects to form a Collection, or
+        add File objects to Collection objects to form a new Collection.
+
+        Examples:
+            >>> # add files to create collection
+            >>> one = coda.File('/file/one.txt')
+            >>> two = coda.File('/file/two.txt')
+            >>> collection = one + two
+            >>> print collection
+            '/file/one.txt'
+            '/file/two.txt'
+            >>>
+            >>> # add file to collection to create new collection'
+            >>> three = coda.File('/file/three.txt')
+            >>> collection = three + collection
+            >>> print collection
+            '/file/three.txt'
+            '/file/one.txt'
+            '/file/two.txt'
+        """
         if isinstance(other, File):
             if self == other:
                 return Collection(files=[self])
@@ -92,12 +115,21 @@ class File(object):
         return
 
     def __getattr__(self, name):
+        """
+        Proxy for accessing metadata directly as a property on the class.
+        """
         return self.metadata[name]
 
     def __getitem__(self, name):
+        """
+        Proxy for accessing metadata directly as a property on the class.
+        """
         return self.metadata[name]
 
     def __setattr__(self, name, value):
+        """
+        Proxy for setting metadata directly as a property on the class.
+        """
         if name not in ['_metadata', 'path']:
             self.metadata[name] = value
         else:
@@ -155,30 +187,83 @@ class Collection(object):
 
     def filter(self, func=lambda x: True):
         """
-        Filter collection using specified function.
+        Filter collection using specified function. This function
+        allows for filtering files from collection objects by an arbitrary
+        operator. This could be used for filtering more specifically by 
+        existing metadata tags, or by more complex methods that read in the file
+        and perform some operation to it.
 
         Args:
             func (function): Function to filter with.
+
+        Examples:
+            >>> # query collection for tag
+            >>> cl = coda.find({'group': 'testing'})
+            >>>
+            >>> # query file by data_type tag (assuming tags exist)
+            >>> cl.filter(lambda x: x.data_type in ['csv', 'txt'])
         """
         return Collection(filter(func, self.files))
 
     def __str__(self):
+        """
+        Return string representation for collection (list of file paths).
+        """
         return '\n'.join(map(str, self.files))
 
     def __cmp__(self, other):
+        """
+        Compare collection objects by number of files in the collections.
+        """
         return cmp(len(self.files), len(other.files))
 
     def __iter__(self):
+        """
+        Iterator for collection object. Iterates by returning each file.
+        """
         for obj in self.files:
             yield obj
 
     def __len__(self):
+        """
+        Return length of collection object (number of files in collection).
+        """
         return len(self.files)
 
     def __contains__(self, item):
+        """
+        Check if item exists in file set. Input item should be a File object.
+        """
         return item in self.files
 
     def __add__(self, other):
+        """
+        Addition operator for collections or files. Using this, you can
+        add Collection objects to other Colletion objects to form a Collection, or
+        add Collection objects to File objects to form a new Collection.
+
+        Examples:
+            >>> # add files to create collection
+            >>> one = coda.File('/file/one.txt')
+            >>> two = coda.File('/file/two.txt')
+            >>> onetwo = one + two
+            >>> three = coda.File('/file/three.txt')
+            >>> four = coda.File('/file/four.txt')
+            >>> threefour = three + four
+            >>>
+            >>> # add collection objects to create new collection
+            >>> print onetwo + threefour
+            '/file/one.txt'
+            '/file/two.txt'
+            '/file/three.txt'
+            '/file/four.txt'
+            >>>
+            >>> # add collection to file object to create new collection
+            >>> print onetwo + three
+            '/file/one.txt'
+            '/file/two.txt'
+            '/file/three.txt'
+        """
         if isinstance(other, File):
             res = map(lambda x: x, self.files)
             if other not in self:
@@ -195,6 +280,29 @@ class Collection(object):
         return
 
     def __sub__(self, other):
+        """
+        Subtraction operator for collections or files. Using this, you can
+        subtract Collection objects from other Colletion objects to form a Collection
+        with the difference in files, or subtract File objects from Collection objects
+        to return a new Collection without the File object.
+
+        Examples:
+            >>> # add files to create collection
+            >>> one = coda.File('/file/one.txt')
+            >>> two = coda.File('/file/two.txt')
+            >>> onetwo = one + two
+            >>> three = coda.File('/file/three.txt')
+            >>> onetwothree = onetwo + three
+            >>>
+            >>> # subtract collection objects to create new collection
+            >>> print onetwothree - onetwo
+            '/file/three.txt'
+            >>>
+            >>> # subtract file from collection object to create new collection
+            >>> print onetwothree - three
+            '/file/one.txt'
+            '/file/two.txt'
+        """
         if isinstance(other, File):
             return Collection(files=filter(lambda x: x != other, self.files))
         elif isinstance(other, Collection):
@@ -204,14 +312,24 @@ class Collection(object):
         return
 
     def __getattr__(self, name):
+        """
+        Proxy for accessing metadata directly as a property on the class.
+        """
         return self.metadata[name]
 
     def __getitem__(self, idx):
+        """
+        Proxy for accessing metadata directly as a property on the class.
+        """
         return self.files[idx]
 
     def __setattr__(self, name, value):
+        """
+        Proxy for setting metadata directly as a property on the class.
+        """
         if name not in ['_metadata', 'files']:
             self.add_metadata({name: value})
         else:
             super(Collection, self).__setattr__(name, value)
         return
+

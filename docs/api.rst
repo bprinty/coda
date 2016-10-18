@@ -24,6 +24,8 @@ Files and Collections
 Querying
 --------
 
+
+
 .. autofunction:: coda.find
 .. autofunction:: coda.find_one
 .. autofunction:: coda.add

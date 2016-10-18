@@ -14,8 +14,7 @@ import pymongo
 from gems import composite
 from multipledispatch import dispatch
 
-from coda.objects import File as BaseFile
-from coda.objects import Collection
+from coda.objects import File, Collection
 from coda.utils import DocRequire, keywords
 
 
@@ -71,7 +70,15 @@ def options(*args, **kwargs):
         kwargs (dict): List of arbitrary config items to set.
 
     Examples:
-        >>> coda.options({'host': 'localhost'})
+        >>> # set options to defaults
+        >>> coda.options()
+        >>> coda.find_one({'name': 'test'}).path
+        '/file/on/localhost/server'
+        >>>
+        >>> # connect to a database for a different host
+        >>> coda.options({'host': 'remote'})
+        >>> coda.find_one({'name': 'test'}).path
+        '/file/on/remote/server'
     """
     global session, __default_config__, __user_config__
     with open(__default_config__, 'r') as cfig:
@@ -95,23 +102,19 @@ options()
 
 # extensions
 # ----------
-class File(BaseFile):
+def _metadata(self):
     """
-    File object extended with database querying functionality.
+    Proxy for returning metadata -- if the file exists in the database,
+    then pull metadata for it if none already exists. If metadata exists
+    for the object, then return that.
     """
+    if len(self._metadata) == 0:
+        obj = find_one({'path': self.path})
+        if obj is not None:
+            self._metadata = obj._metadata
+    return self._metadata
 
-    @property
-    def metadata(self):
-        """
-        Proxy for returning metadata -- if the file exists in the database,
-        then pull metadata for it if none already exists. If metadata exists
-        for the object, then return that.
-        """
-        if len(self._metadata) == 0:
-            obj = find_one({'path': self.path})
-            if obj is not None:
-                self._metadata = obj._metadata
-        return self._metadata
+property(File, 'metadata', _metadata)
 
 
 # searching
@@ -119,6 +122,26 @@ class File(BaseFile):
 def find(query):
     """
     Search database for files with specified metadata.
+
+    Args:
+        query (dict): Dictionary with query parameters.
+
+    Returns:
+        Collection: Collection object with results.
+
+    Examples:
+        >>> # assuming the database has already been populated
+        >>> print coda.find({'type': 'test'})
+        '/my/testing/file/one.txt'
+        '/my/testing/file/two.txt'
+        >>>
+        >>> # assuming 'count' represents line count in the file
+        >>> print coda.find({'type': 'test', 'count': {'$lt': 30}})
+        '/my/testing/file/two.txt'
+        >>>
+        >>> # using the filter() method on collections instead
+        >>> print coda.find({'type': 'test'}).filter(lambda x: x.count < 30)
+        '/my/testing/file/two.txt'
     """
     files = []
     for item in session.db.files.find(query):
@@ -137,7 +160,22 @@ def find(query):
 
 def find_one(query):
     """
-    Search database for one files with specified metadata.
+    Search database for one file with specified metadata.
+
+    Args:
+        query (dict): Dictionary with query parameters.
+
+    Returns:
+        File: File object with results.
+
+    Examples:
+        >>> # assuming the database has already been populated
+        >>> print coda.find_one({'type': 'test'})
+        '/my/testing/file/one.txt'
+        >>>
+        >>> # assuming 'count' represents line count in the file
+        >>> print coda.find({'type': 'test', 'count': {'$lt': 30}})
+        '/my/testing/file/two.txt'
     """
     item = session.db.files.find_one(query)
     if item is None:
@@ -159,7 +197,20 @@ def add(obj):
     Add file object or collection object to database.
 
     Args:
-        obj (File, Collection): File or collection of files to delete.
+        obj (File, Collection): File or collection of files to add.
+
+    Examples:
+        >>> # instantiate File object and add metadata
+        >>> fi = coda.File('/path/to/test/file.txt')
+        >>> fi.type = 'test'
+        >>> 
+        >>> # add file to database
+        >>> coda.add(fi)
+        >>>
+        >>> # instantiate directory as Collection with common metadata
+        >>> cl = coda.Collection('/path/to/test/dir/')
+        >>> cl.type = 'test'
+        >>> coda.add(cl)
     """
     global session
     if isinstance(obj, (Collection, list, tuple)):
@@ -181,6 +232,19 @@ def delete(obj):
 
     Args:
         obj (File, Collection): File or collection of files to delete.
+
+    Examples:
+        >>> # instantiate File object and delete
+        >>> fi = coda.File('/path/to/test/file.txt')
+        >>> coda.delete(fi)
+        >>>
+        >>> # instantiate directory and delete
+        >>> cl = coda.Collection('/path/to/test/dir/')
+        >>> coda.delete(cl)
+        >>>
+        >>> # query by metadata and delete entries
+        >>> cl = coda.find({'type': 'testing'})
+        >>> coda.delete(cl)
     """
     global session
     if isinstance(obj, (Collection, list, tuple)):

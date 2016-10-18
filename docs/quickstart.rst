@@ -24,12 +24,11 @@ As a quick example of how to use coda to organize an arbitrary dataset, see the 
     >>> files = collection.filter(search='testing.*')
     >>> print len(files)
     2
-    >>> for obj in files:
-    >>>     obj.metadata.cohort = testing
-    >>>     coda.update(obj)
+    >>> files.cohort = 'testing'
+    >>> coda.add(files)
     >>>
     >>> # now search again for only those files
-    >>> collection = coda.search(cohort='testing')
+    >>> collection = coda.find({'cohort': 'testing'})
     >>> print len(collection)
     2
     >>> print collection
@@ -52,6 +51,57 @@ Objects
 Individual Files
 ~~~~~~~~~~~~~~~~
 
+:class:`coda.File` objects are used throughout ``coda`` for managing properties about
+files, and serve as proxies for querying operations that take place. Generally a new
+:class:`coda.File` object is instantiated and tagged with metadata whenever a file
+needs to be added for tracking to the coda database. To instantiate a new file, use:
+
+.. code-block:: python
+    
+    >>> fi = coda.File('/path/to/my/file.txt', metadata={
+        'group': 'dev',
+        'sample': 'A001'
+    })
+    >>> print fi.metadata
+    {'group': 'dev', 'sample': 'A001'}
+
+
+You can also get and set metadata properties directly on the class:
+
+.. code-block:: python
+
+    >>> fi = coda.File('/path/to/my/file.txt')
+    >>> fi.group = 'dev'
+    >>> fi.sample = 'A001'
+    >>> print fi.metadata
+    {'group': 'dev', 'sample': 'A001'}
+
+
+If a file already exists in the database, the metadata property will automatically be
+populated with the content from the database:
+
+.. code-block:: python
+
+    >>> fi = coda.File('/path/to/my/file.txt', metadata={
+        'group': 'dev',
+        'sample': 'A001'
+    })
+    >>> coda.add(fi)
+    >>>
+    >>> fi2 = coda.File('/path/to/my/file.txt')
+    >>> print fi2.metadata
+    {'group': 'dev', 'sample': 'A001'}
+
+
+Additionally, you can query the database for a single :class:`coda.File` object matching parameters
+if you use the :func:`coda.find_one` query method:
+
+.. code-block:: python
+
+    >>> fi = coda.find_one({'group': 'dev'})
+    >>> print fi
+    '/path/to/my/file.txt'
+
 
 Collections of Files
 ~~~~~~~~~~~~~~~~~~~~
@@ -64,9 +114,42 @@ Database Operations
 Adding Files to Tracking
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
+For adding files to the database, the :func:`coda.add` method is used. The argument to 
+
 
 Updating Files with Metadata
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Searching for Files with Metadata
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Once files have been added to the database and tagged with metadata, the :func:`coda.find`
+and :func:`coda.find_one`, can be used to query for files matching specific metadata criteria.
+These two methods take a dictionary of query parameters as an argument and return either
+a :class:`coda.File` (:func:`coda.find_one`) or :class:`coda.Collection` object (:func:`coda.find`)
+containing the query results. As an example, to query files with a particular metadata tag:
+
+.. code-block:: python
+
+    >>> cl = coda.find({'group': 'dev'})
+    >>> print cl
+    '/path/to/dev/file/one.txt'
+    '/path/to/dev/file/two.txt'
+
+
+You can also use `MongoDB query parameters <https://docs.mongodb.com/v3.2/reference/method/db.collection.find/>`_ to do more advanced queryies on data:
+
+
+
+Deleting Files from the Database
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Example Use Case
+----------------
+
+
 
 
 Notes on Performance
