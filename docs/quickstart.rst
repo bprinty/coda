@@ -215,15 +215,60 @@ Untracking Files
 
 To untrack files and delete them from the ``coda`` database, the :func:`coda.delete` method is used. The
 :func:`coda.delete` takes a :class:`coda.File` with metadata or a :class:`coda.Collection` object, and
-deletes all instances of associated files in the database.
+deletes all instances of associated files in the database. For example:
 
 .. code-block:: python
+
+    >>> # query for a file object
+    >>> fi = coda.find_one({'group': 'dev', 'old': True})
+    >>> coda.delete(fi)
+    >>>
+    >>> # delete a tracked file from the filesystem
+    >>> fi = coda.File('/path/to/file/one.txt')
+    >>>
+    >>> # Delete the file -- if it is already in the database,
+    >>> # it will be removed. Otherwise, nothing happens. It's also
+    >>> # worth nothing that this method does not delete the actual file.
+    >>> coda.delete(fi)
+    >>>
+    >>> # delete the 'dev' collection from before
+    >>> cl = coda.find({'group': 'dev'})
+    >>> coda.delete(cl)
 
 
 
 Updating Metadata
 -----------------
 
+To update metadata about a :class:`coda.File` or :class:`coda.Collection`, simply re-add the file
+(using :func:`coda.add`) with the updated meatadata. For example:
+
+.. code-block:: python
+
+    >>> # query a file object
+    >>> fi = coda.find_one({'group': 'dev', 'special': True})
+    >>> print fi
+    /path/to/file/three.txt
+    >>> 
+    >>> # add new metadata on that object and update the database
+    >>> fi.special = False
+    >>> fi.key = 'value'
+    >>> coda.add(fi)
+    >>>
+    >>> # show the new metadata -- as shown before, you can just
+    >>> # instantiate a file object directly, and the metadata will
+    >>> # flow implicitly from the database
+    >>> fi = coda.File('/path/to/file/three.txt')
+    >>> print fi.metadta
+    {'group': 'dev', 'special': True, 'special': False, 'key': 'value'}
+    >>>
+    >>> # you can similarly update a collection -- for the examples
+    >>> # below, all files have already been added to the database
+    >>> cl = coda.Collection('/path/to/file')
+    >>> print cl.metadata
+    {'group': 'dev'}
+    >>> cl.key = 'newvalue'
+    >>> coda.add(cl)
 
 
 Querying
@@ -239,20 +284,77 @@ containing the query results. As an example, to query files with a particular me
 
     >>> cl = coda.find({'group': 'dev'})
     >>> print cl
-    '/path/to/dev/file/one.txt'
-    '/path/to/dev/file/two.txt'
+    /path/to/dev/file/one.txt
+    /path/to/dev/file/two.txt
 
 
-You can also use `MongoDB query parameters <https://docs.mongodb.com/v3.2/reference/method/db.collection.find/>`_ to do more advanced queryies on data:
+Since you can filter collection objects by arbitrary functions, doing more advanced queryies
+about file contents is easy:
+
+.. code-block:: python
+
+    >>> # define more advanced filtering function --
+    >>> # this example just makes sure the number of lines is
+    >>> # greater than 50
+    >>> def my_filter(name):
+    >>>     with open(name, 'r') as fi:
+    >>>         length = len(fi.readlines())
+    >>>     return length > 50 
+    >>> 
+    >>> # query and filter the collection
+    >>> cl = coda.find({'group': 'dev'}).filter(my_filter)
+    >>> print cl
+    /path/to/dev/file/two.txt
 
 
+Querying for single files is similarly as easy:
 
-Notes on Performance
---------------------
+.. code-block:: python
 
-.. Talk about not polluting metadata with heavy data ... heavy data should be stored
-.. in files and referenced in metadata. Set-based operations for gathering metadata on
-.. Collections assumes that the metadata is relatively minimal (no extremely deep data structures).
+    >>> fi = coda.find_one({'group': 'dev'})
+    >>> print fi
+    /path/to/dev/file/one.txt
+
+
+As alluded to above, ``coda`` also provides functionality for implicitly doing the querying. If
+you already have a file object that you want to know metadata about, instead of using :func:`coda.find_one`
+with the ``path`` parameter, you can just instantiate a :class:`coda.File` object and query the
+metadata directly. The information is pulled implicitly from the database. For example:
+
+.. code-block:: python
+
+    >>> fi = coda.File('/path/to/dev/file/one.txt')
+    >>> print fi.metadata
+    {'group': 'dev', 'sample': 'A001'}
+
+
+You can also use this method of querying for collections:
+
+.. code-block:: python
+
+    >>> cl = coda.Collection('/path/to/dev/files')
+    >>> print cl.metadata
+    {'group': 'dev'}
+
+
+Finally, since ``coda`` is using MongoDB for storing the metadata, when performing queries with
+:func:`coda.find` and :func:`coda.find_one`, you can use
+`MongoDB query parameters <https://docs.mongodb.com/v3.0/reference/operator/query/>`_
+to do more advanced querying on data:
+
+.. code-block:: python
+
+    >>> cl = coda.find({'$or': [{'group': 'dev'}, {'group': 'test'}]})
+
+
+.. Notes on Performance
+.. --------------------
+
+.. Some datasets have lots of features that are hard to nav``coda`` is not meant to
+
+.. .. Talk about not polluting metadata with heavy data ... heavy data should be stored
+.. .. in files and referenced in metadata. Set-based operations for gathering metadata on
+.. .. Collections assumes that the metadata is relatively minimal (no extremely deep data structures).
 
 
 
