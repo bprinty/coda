@@ -236,7 +236,6 @@ deletes all instances of associated files in the database. For example:
     >>> coda.delete(cl)
 
 
-
 Updating Metadata
 -----------------
 
