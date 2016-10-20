@@ -12,7 +12,6 @@ import os
 from cached_property import cached_property
 import pymongo
 from gems import composite
-from multipledispatch import dispatch
 
 from coda.objects import File, Collection
 from coda.utils import DocRequire, keywords
