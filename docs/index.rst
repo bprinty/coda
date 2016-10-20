@@ -8,7 +8,15 @@ Welcome to coda's documentation!
 Introduction:
 =============
 
-Coda is a file system organizer, originally designed for data scientists who frequently deal with large amounts of heterogeneous data. In this age where data are king, being able to efficiently search and label those data is paramount to maintaining productivity. Coda provides tools for tagging, aggregating, and searching files. ... BLAH ADD MORE.
+Coda is a file system organizer, designed for data scientists who frequently deal
+with large amounts of heterogeneous data. In this age where data rules all, being able to
+efficiently search and label those data is paramount to maintaining productivity. Coda
+allows you to tag files with arbitrary metadata, so that you can stay organized when
+managing/analyzing large datasets over time. 
+
+As a quick example of how coda might be useful for organizing an arbitrary dataset,
+see the following example (see the `Quickstart <./quickstart.html>`_ section for more
+in-depth documentation):
 
 .. talk about the principles of coda:
 ..    - files are associated with metadata
@@ -18,9 +26,6 @@ Coda is a file system organizer, originally designed for data scientists who fre
 ..    - great for data scientists
 
 .. separate the examples below into more readable chunks
-
-
-As a quick example of how to use coda to organize an arbitrary dataset, see the following example:
 
 .. code-block:: python
 
