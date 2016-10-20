@@ -79,4 +79,4 @@ For installation and usage instructions please see the `documentation <http://co
 Questions/Feedback
 ------------------
 
-File an issue in the [GitHub issue tracker](https://github.com/bprinty/coda/issues).
+File an issue in the `GitHub issue tracker <https://github.com/bprinty/coda/issues>`_.
