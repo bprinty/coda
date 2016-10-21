@@ -322,13 +322,19 @@ class Collection(object):
         """
         Proxy for accessing metadata directly as a property on the class.
         """
-        return self.metadata[name]
+        if isinstance(name, basestring):
+            return self.metadata[name]
+        else:
+            return self.files[name]
 
-    def __getitem__(self, idx):
+    def __getitem__(self, item):
         """
         Proxy for accessing metadata directly as a property on the class.
         """
-        return self.files[idx]
+        if isinstance(item, basestring):
+            return self.metadata[item]
+        else:
+            return self.files[item]
 
     def __setattr__(self, name, value):
         """
