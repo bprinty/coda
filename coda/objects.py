@@ -68,6 +68,12 @@ class File(object):
         """
         return self.path
 
+    def __contains__(self, item):
+        """
+        Check if specified string exists in file name.
+        """
+        return item in self.name
+
     def __cmp__(self, other):
         """
         Comparison operator. Compares left and right file
@@ -322,10 +328,7 @@ class Collection(object):
         """
         Proxy for accessing metadata directly as a property on the class.
         """
-        if isinstance(name, basestring):
-            return self.metadata[name]
-        else:
-            return self.files[name]
+        return self.metadata[name]
 
     def __getitem__(self, item):
         """

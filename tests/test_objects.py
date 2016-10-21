@@ -63,6 +63,10 @@ class TestFile(unittest.TestCase):
         f2 = coda.File(two, metadata={'filetype': 'text', 'content': 'nothing'})
         f3 = coda.File(three, metadata={'filetype': 'text', 'content': 'something'})
 
+        # contains
+        self.assertTrue('one' in one)
+        self.assertFalse('two' in one)
+
         # addition
         cl1 = f1 + f2
         self.assertTrue(isinstance(cl1, coda.Collection))
