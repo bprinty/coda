@@ -46,6 +46,18 @@ class Session(object):
         return
 
     @property
+    def options(self):
+        """
+        Return JSON with options on the session.
+        """
+        return {
+            'host': self.host,
+            'port': self.port,
+            'write': self.write,
+            'dbname': self.dbname
+        }
+
+    @property
     def db(self):
         """
         Internal property for managing connection to mongodb database.
