@@ -50,9 +50,8 @@ setup(
     install_requires=requirements,
     license='Apache-2.0',
     zip_safe=False,
-    keywords='coda',
+    keywords=['coda', 'data', 'science', 'analysis', 'file', 'organization', 'metadata'],
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache-3.0 License',
         'Natural Language :: English',
