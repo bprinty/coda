@@ -53,7 +53,7 @@ setup(
     keywords=['coda', 'data', 'science', 'analysis', 'file', 'organization', 'metadata'],
     classifiers=[
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: Apache-3.0 License',
+        'License :: OSI Approved :: Apache Software License',
         'Natural Language :: English',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
