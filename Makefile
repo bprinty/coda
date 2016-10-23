@@ -7,6 +7,7 @@
 
 # config
 # ------
+REMOTE     = origin
 VERSION    = `python -c 'import coda; print coda.__version__'`
 
 
@@ -47,8 +48,8 @@ docs:
 	cd docs && make html
 
 release: tag
-	VER=$(VERSION) && git push origin :$$VER || echo 'Remote tag available'
-	VER=$(VERSION) && git push origin $$VER
+	VER=$(VERSION) && git push $(REMOTE) :$$VER || echo 'Remote tag available'
+	VER=$(VERSION) && git push $(REMOTE) $$VER
 	python setup.py sdist upload -r pypitest
 	python setup.py sdist upload -r pypi
 
