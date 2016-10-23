@@ -2,6 +2,7 @@ include LICENSE
 include README.rst
 include Makefile
 include requirements.txt
+include coda/.coda
 
 recursive-include tests docs *
 recursive-exclude * __pycache__
