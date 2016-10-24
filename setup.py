@@ -9,6 +9,8 @@
 
 # config
 # ------
+import coda
+
 try:
     from setuptools import setup
 except ImportError:
@@ -35,7 +37,7 @@ with open('README.rst') as readme_file:
 # ----
 setup(
     name='coda',
-    version='0.0.1',
+    version=coda.__version__,
     description='File metadata tagging and organization.',
     long_description=readme,
     author='Blake Printy',
@@ -50,11 +52,10 @@ setup(
     install_requires=requirements,
     license='Apache-2.0',
     zip_safe=False,
-    keywords='coda',
+    keywords=['coda', 'data', 'science', 'analysis', 'file', 'organization', 'metadata'],
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: Apache-3.0 License',
+        'License :: OSI Approved :: Apache Software License',
         'Natural Language :: English',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
