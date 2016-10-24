@@ -346,6 +346,33 @@ to do more advanced querying on data:
     >>> cl = coda.find({'$or': [{'group': 'dev'}, {'group': 'test'}]})
 
 
+
+.. Command-Line Use
+.. ----------------
+
+.. High-level components of the functionality available above is also accessible
+.. via the ``coda`` command-line entry point. Using the entry point, you can
+.. add, delete, and tag files or collections of files. Below are examples of
+.. the api:
+
+..
+
+..     $ # show api information about entry point
+..     $ coda -h
+..     $
+..     $ # add a file for tracking to the database --
+..     $ # by default, no metadata is added
+..     $ coda add /path/to/file.txt
+..     $
+..     $ # add a collection of files for tracking
+..     $ coda add /path/to/directory/
+
+
+..     $ # add metadata for a file to the database
+..     $ coda tag extension txt /path/to/file.txt
+
+
+
 .. Notes on Performance
 .. --------------------
 
