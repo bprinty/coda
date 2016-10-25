@@ -6,6 +6,11 @@
 # ------------------------------------------------
 
 
+# compatibility
+# -------------
+from builtins import map, object
+
+
 # imports
 # -------
 import os
@@ -225,7 +230,7 @@ def add(obj):
     """
     global session
     if isinstance(obj, (Collection, list, tuple)):
-        return map(add, obj)
+        return list(map(add, obj))
     if not isinstance(obj, File):
         raise TypeError('unsupported type for add {}'.format(type(obj)))
     ret = session.db.files.find_one({'path': obj.path})
@@ -259,7 +264,7 @@ def delete(obj):
     """
     global session
     if isinstance(obj, (Collection, list, tuple)):
-        return map(delete, obj)
+        return list(map(delete, obj))
     if not isinstance(obj, File):
         raise TypeError('unsupported type for delete {}'.format(type(obj)))
     return session.db.files.delete_many({'path': obj.path})

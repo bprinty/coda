@@ -6,6 +6,13 @@
 # ------------------------------------------------
 
 
+# compatibility
+# -------------
+from past.builtins import cmp, basestring
+from builtins import map, filter, range, object
+from future.utils import with_metaclass
+
+
 # imports
 # -------
 import os
@@ -16,7 +23,7 @@ from coda.utils import DocRequire, keywords
 
 # files
 # -----
-class File(object):
+class File(with_metaclass(DocRequire, object)):
     """
     Abstract class for file object.
 
@@ -25,7 +32,6 @@ class File(object):
         metadata (dict): Dictionary with common metadata for collection,
             specified a priori.
     """
-    __metaclass__ = DocRequire
 
     def __init__(self, path, metadata={}):
         assert os.path.exists(path), 'Specified file path does not exist!'
@@ -143,7 +149,7 @@ class File(object):
         return
 
 
-class Collection(object):
+class Collection(with_metaclass(DocRequire, object)):
     """
     Abstract class for collection of file objects.
 
@@ -153,14 +159,13 @@ class Collection(object):
         metadata (dict): Dictionary with common metadata for collection,
             specified a priori.
     """
-    __metaclass__ = DocRequire
 
     def __init__(self, files, metadata={}):
         if isinstance(files, basestring):
             assert os.path.exists(files), 'Specified path does not exist!'
             assert os.path.isdir(files), 'Specified path is not a directory! Use the File object for a file.'
             ft = filetree(files)
-            self.files = map(lambda x: File(x), ft.filelist())
+            self.files = [File(x) for x in ft.filelist()]
         else:
             self.files = files
         self._metadata = composite(metadata)
@@ -171,7 +176,7 @@ class Collection(object):
         """
         Return list with full paths to files in collection.
         """
-        return map(lambda x: x.path, self.files)
+        return [x.path for x in self.files]
 
     @property
     def metadata(self):
@@ -216,7 +221,7 @@ class Collection(object):
             >>> # query file by data_type tag (assuming tags exist)
             >>> cl.filter(lambda x: x.data_type in ['csv', 'txt'])
         """
-        return Collection(filter(func, self.files))
+        return Collection(files=list(filter(func, self.files)))
 
     def __str__(self):
         """
@@ -278,12 +283,12 @@ class Collection(object):
             '/file/three.txt'
         """
         if isinstance(other, File):
-            res = map(lambda x: x, self.files)
+            res = [x for x in self.files]
             if other not in self:
                 res += [other]
             return Collection(files=res, metadata=self._metadata)
         elif isinstance(other, Collection):
-            res = map(lambda x: x, self.files)
+            res = [x for x in self.files]
             for item in other.files:
                 if item not in self:
                     res += [item]
@@ -317,9 +322,9 @@ class Collection(object):
             '/file/two.txt'
         """
         if isinstance(other, File):
-            return Collection(files=filter(lambda x: x != other, self.files))
+            return Collection(files=[x for x in self.files if x != other])
         elif isinstance(other, Collection):
-            return Collection(files=filter(lambda x: x not in other, self.files))
+            return Collection(files=[x for x in self.files if x not in other])
         else:
             raise TypeError('unsupported operand type(s) for +: \'{}\' and \'{}\''.format(type(self), type(other)))
         return

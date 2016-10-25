@@ -22,7 +22,7 @@ class DocRequire(type):
     """
 
     def __init__(self, name, bases, attrs):
-        for key, value in attrs.items():
+        for key, value in list(attrs.items()):
             if key.startswith("__") or key.startswith("_"):
                 continue
             if not hasattr(value, "__call__"):
