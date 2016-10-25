@@ -45,6 +45,7 @@ def setUp():
     cwd = os.path.dirname(os.path.realpath(__file__))
     coda.db.__user_config__ = os.path.join(cwd, 'resources', '.coda')
     coda.db.options()
+    coda.db.session.db.files.drop()
     coda.add(cl)
     return
 

@@ -43,11 +43,13 @@ setup(
     author='Blake Printy',
     author_email='bprinty@gmail.com',
     url='https://github.com/bprinty/coda',
-    packages=[
-        'coda',
-    ],
-    package_dir={'coda':
-                 'coda'},
+    packages=['coda'],
+    package_dir={'coda': 'coda'},
+    entry_points={
+        'console_scripts': [
+            'coda = coda.__main__:main'
+        ]
+    },
     include_package_data=True,
     install_requires=requirements,
     license='Apache-2.0',

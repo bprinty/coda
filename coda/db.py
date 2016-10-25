@@ -130,7 +130,9 @@ def _metadata(self):
             self._metadata = obj._metadata
     return self._metadata
 
-property(File, 'metadata', _metadata)
+
+File.metadata = property(_metadata)
+Collection.__file_base__ = File
 
 
 # searching
@@ -264,7 +266,7 @@ def delete(obj):
     """
     global session
     if isinstance(obj, (Collection, list, tuple)):
-        return list(map(delete, obj))
+        return list(map(delete, obj.files))
     if not isinstance(obj, File):
         raise TypeError('unsupported type for delete {}'.format(type(obj)))
     return session.db.files.delete_many({'path': obj.path})

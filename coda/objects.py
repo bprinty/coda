@@ -36,7 +36,7 @@ class File(with_metaclass(DocRequire, object)):
     def __init__(self, path, metadata={}):
         assert os.path.exists(path), 'Specified file path does not exist!'
         assert not os.path.isdir(path), 'Specified file is not a file! Use the Collection object for a directory.'
-        self.path = path
+        self.path = os.path.realpath(path)
         self._metadata = composite(metadata)
         return
 
@@ -159,13 +159,14 @@ class Collection(with_metaclass(DocRequire, object)):
         metadata (dict): Dictionary with common metadata for collection,
             specified a priori.
     """
+    __file_base__ = File
 
     def __init__(self, files, metadata={}):
         if isinstance(files, basestring):
             assert os.path.exists(files), 'Specified path does not exist!'
             assert os.path.isdir(files), 'Specified path is not a directory! Use the File object for a file.'
             ft = filetree(files)
-            self.files = [File(x) for x in ft.filelist()]
+            self.files = [self.__file_base__(x) for x in ft.filelist()]
         else:
             self.files = files
         self._metadata = composite(metadata)
@@ -221,7 +222,7 @@ class Collection(with_metaclass(DocRequire, object)):
             >>> # query file by data_type tag (assuming tags exist)
             >>> cl.filter(lambda x: x.data_type in ['csv', 'txt'])
         """
-        return Collection(files=list(filter(func, self.files)))
+        return self.__class__(files=list(filter(func, self.files)))
 
     def __str__(self):
         """
@@ -282,17 +283,17 @@ class Collection(with_metaclass(DocRequire, object)):
             '/file/two.txt'
             '/file/three.txt'
         """
-        if isinstance(other, File):
+        if isinstance(other, self.__file_base__):
             res = [x for x in self.files]
             if other not in self:
                 res += [other]
-            return Collection(files=res, metadata=self._metadata)
-        elif isinstance(other, Collection):
+            return self.__class__(files=res, metadata=self._metadata)
+        elif isinstance(other, self.__class__):
             res = [x for x in self.files]
             for item in other.files:
                 if item not in self:
                     res += [item]
-            return Collection(files=res, metadata=self._metadata)
+            return self.__class__(files=res, metadata=self._metadata)
         else:
             raise TypeError('unsupported operand type(s) for +: \'{}\' and \'{}\''.format(type(self), type(other)))
         return
@@ -321,10 +322,10 @@ class Collection(with_metaclass(DocRequire, object)):
             '/file/one.txt'
             '/file/two.txt'
         """
-        if isinstance(other, File):
-            return Collection(files=[x for x in self.files if x != other])
+        if isinstance(other, self.__file_base__):
+            return self.__class__(files=[x for x in self.files if x != other])
         elif isinstance(other, Collection):
-            return Collection(files=[x for x in self.files if x not in other])
+            return self.__class__(files=[x for x in self.files if x not in other])
         else:
             raise TypeError('unsupported operand type(s) for +: \'{}\' and \'{}\''.format(type(self), type(other)))
         return
@@ -351,6 +352,6 @@ class Collection(with_metaclass(DocRequire, object)):
         if name not in ['_metadata', 'files']:
             self.add_metadata({name: value})
         else:
-            super(Collection, self).__setattr__(name, value)
+            super(self.__class__, self).__setattr__(name, value)
         return
 

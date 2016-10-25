@@ -347,29 +347,63 @@ to do more advanced querying on data:
 
 
 
-.. Command-Line Use
-.. ----------------
+Command-Line Use
+----------------
 
-.. High-level components of the functionality available above is also accessible
-.. via the ``coda`` command-line entry point. Using the entry point, you can
-.. add, delete, and tag files or collections of files. Below are examples of
-.. the api:
+High-level components of the functionality described above is also accessible
+via the ``coda`` command-line entry point. Using the entry point, you can
+add, delete, and tag files or collections of files. Below are examples of
+the API:
 
-..
+.. code-block:: bash
 
-..     $ # show api information about entry point
-..     $ coda -h
-..     $
-..     $ # add a file for tracking to the database --
-..     $ # by default, no metadata is added
-..     $ coda add /path/to/file.txt
-..     $
-..     $ # add a collection of files for tracking
-..     $ coda add /path/to/directory/
+    ~$ # add a file for tracking to the database
+    ~$ coda add /path/to/file.txt
+    ~$
+    ~$ # add a collection of files for tracking
+    ~$ coda add /path/to/directory/
 
 
-..     $ # add metadata for a file to the database
-..     $ coda tag extension txt /path/to/file.txt
+To tag a file or collection with specific metadata, use the ``tag`` subcommand:
+
+.. code-block:: bash
+
+    ~$ # format: coda tag <file> <key> <value>
+    ~$ coda tag /path/to/file.txt extension txt
+
+
+To remove a file from tracking, use the ``delete`` subcommand:
+
+.. code-block:: bash
+
+    ~$ coda delete /path/to/file.txt
+
+
+To show all metadata about a file, use the ``show`` subcommand:
+
+.. code-block:: bash
+
+    ~$ coda show /path/to/file.txt
+    /path/to/file.txt
+    {
+        "extension": "txt"
+    }
+
+
+To find files matching metadata search criteria, use the ``find`` command:
+
+.. code-block:: bash
+    
+    ~$ # format: coda find <key> <value>
+    ~$ coda find extension txt
+    /path/to/file.txt
+
+
+For more information, check out the command-line help information:
+
+.. code-block:: bash
+
+    ~$ coda -h
 
 
 
