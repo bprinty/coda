@@ -31,6 +31,19 @@ class TestEntryPoints(unittest.TestCase):
         self.assertTrue('good to go!' in res)
         return
 
+    def test_list(self):
+        path = os.path.realpath(__file__)
+        fi = coda.File(path=path, metadata={
+            'cohort': 'testing',
+            'ext': 'py',
+            'type': 'source'
+        })
+        coda.add(fi)
+        res = self.call('list')
+        self.assertTrue('tests/test_coda.py' in res)
+        coda.delete(fi)
+        return
+
     def test_find(self):
         path = os.path.realpath(__file__)
         fi = coda.File(path=path, metadata={

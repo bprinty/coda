@@ -55,6 +55,17 @@ def status(args):
     return
 
 
+def listdir(args):
+    """
+    List tracked files under the user's current directory.
+    """
+    cwd = os.getcwd().replace('/', '\/')
+    cl = coda.find({'path': {'$regex': '^' + cwd + '.*'}})
+    if cl is not None:
+        sys.stdout.write(str(cl) + '\n')
+    return
+
+
 def find(args):
     """
     Find files with associated keys and metadata.
@@ -72,10 +83,13 @@ def show(args):
     """
     fi = coda.File(args.collection[0].path)
     for fi in args.collection:
-        sys.stdout.write('\n' + fi.path + '\n')
         md = fi.metadata.json()
-        del md['_id']
-        sys.stdout.write(json.dumps(md, sort_keys=True, indent=4) + '\n')
+        if len(md) != 0:
+            del md['_id']
+            sys.stdout.write('\n' + fi.path + '\n')
+            sys.stdout.write(json.dumps(md, sort_keys=True, indent=4) + '\n')
+        else:
+            sys.stdout.write('No metadata found for {}\n'.format(fi.name))
     return
 
 
@@ -131,6 +145,13 @@ parser_status.set_defaults(func=status)
 parser_show = subparsers.add_parser('show')
 parser_show.add_argument('files', nargs='+', help='File or collection to list metadata for.')
 parser_show.set_defaults(func=show)
+
+
+# list
+# ----
+parser_list = subparsers.add_parser('list')
+parser_list.add_argument('path', nargs='?', help='Directory to list tracked files for.')
+parser_list.set_defaults(func=listdir)
 
 
 # find

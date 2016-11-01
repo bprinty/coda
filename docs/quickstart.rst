@@ -372,6 +372,15 @@ To tag a file or collection with specific metadata, use the ``tag`` subcommand:
     ~$ coda tag /path/to/file.txt extension txt
 
 
+To list all of the tracked files in the current directory, use the ``list`` subcommand:
+
+.. code-block:: bash
+
+    ~$ # format: coda list [<path>]
+    ~$ coda list
+    /path/to/file.txt
+
+
 To remove a file from tracking, use the ``delete`` subcommand:
 
 .. code-block:: bash
