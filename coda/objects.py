@@ -6,11 +6,6 @@
 # ------------------------------------------------
 
 
-# compatibility
-# -------------
-from future_builtins import map, filter
-
-
 # imports
 # -------
 import os
@@ -79,14 +74,29 @@ class File(object):
         """
         return item in self.name
 
-    def __cmp__(self, other):
+    def __lt__(self, other):
         """
         Comparison operator. Compares left and right file
         paths alphanumerically.
         """
         if not isinstance(other, File):
             TypeError('unsupported comparison type(s) \'{}\' and \'{}\''.format(type(self), type(other)))
-        return cmp(self.path, other.path)
+        return self.path < other.path
+
+    def __gt__(self, other):
+        """
+        Comparison operator. Compares left and right file
+        paths alphanumerically.
+        """
+        if not isinstance(other, File):
+            TypeError('unsupported comparison type(s) \'{}\' and \'{}\''.format(type(self), type(other)))
+        return self.path > other.path
+
+    def __eq__(self, other):
+        """
+        Test equality for File objects.
+        """
+        return self.path == other.path
 
     def __add__(self, other):
         """
@@ -162,7 +172,7 @@ class Collection(object):
     __file_base__ = File
 
     def __init__(self, files, metadata={}):
-        if isinstance(files, basestring):
+        if isinstance(files, str):
             assert os.path.exists(files), 'Specified path does not exist!'
             assert os.path.isdir(files), 'Specified path is not a directory! Use the File object for a file.'
             ft = filetree(files)
@@ -228,13 +238,25 @@ class Collection(object):
         """
         Return string representation for collection (list of file paths).
         """
-        return '\n'.join(map(str, self.files))
+        return '\n'.join(list(map(str, self.files)))
 
-    def __cmp__(self, other):
+    def __lt__(self, other):
         """
         Compare collection objects by number of files in the collections.
         """
-        return cmp(len(self.files), len(other.files))
+        return len(self.files) < len(other.files)
+
+    def __gt__(self, other):
+        """
+        Compare collection objects by number of files in the collections.
+        """
+        return len(self.files) > len(other.files)
+
+    def __eq__(self, other):
+        """
+        Compare equality for collections.
+        """
+        return sorted(self.files) == sorted(other.files)
 
     def __iter__(self):
         """
@@ -340,7 +362,7 @@ class Collection(object):
         """
         Proxy for accessing metadata directly as a property on the class.
         """
-        if isinstance(item, basestring):
+        if isinstance(item, str):
             return self.metadata[item]
         else:
             return self.files[item]

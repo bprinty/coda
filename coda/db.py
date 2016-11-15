@@ -6,11 +6,6 @@
 # ------------------------------------------------
 
 
-# compatibility
-# -------------
-from future_builtins import map
-
-
 # imports
 # -------
 import os

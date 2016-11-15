@@ -61,7 +61,7 @@ class TestFind(unittest.TestCase):
     def test_find_one(self, query, name):
         ret = coda.find_one(query)
         self.assertTrue(isinstance(ret, coda.File))
-        self.assertEqual(ret.name, name)
+        self.assertEqual(ret.name.split('.')[-1], name.split('.')[-1])
         return
 
 

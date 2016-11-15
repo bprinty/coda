@@ -22,9 +22,9 @@ class TestEntryPoints(unittest.TestCase):
 
     def call(self, subcommand, *args):
         wd = os.path.realpath(os.path.join(coda.db.__base__, '..'))
-        return subprocess.check_output('PYTHONPATH={} python {}/coda/__main__.py -c {} {} {}'.format(
-            wd, wd, coda.db.__user_config__, subcommand, ' '.join(args)
-        ), stderr=subprocess.STDOUT, shell=True)
+        return str(subprocess.check_output('PYTHONPATH=$PYTHONPATH:{} python -m coda -c {} {} {}'.format(
+            wd, coda.db.__user_config__, subcommand, ' '.join(args)
+        ), stderr=subprocess.STDOUT, shell=True))
 
     def test_status(self):
         res = self.call('status')

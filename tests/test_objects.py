@@ -117,8 +117,8 @@ class TestCollection(unittest.TestCase):
     def test_properties_filetree(self):
         cl = coda.Collection(os.path.join(__resources__, 'simple'))
         self.assertEqual(
-            map(lambda x: x.name, cl.files),
-            ['one.txt', 'four.txt', 'three.txt', 'two.txt']
+            sorted(list(map(lambda x: x.name, cl.files))),
+            sorted(['one.txt', 'four.txt', 'three.txt', 'two.txt'])
         )
         return
 
@@ -126,8 +126,8 @@ class TestCollection(unittest.TestCase):
         cl = coda.Collection(os.path.join(__resources__, 'simple'))
         cl2 = cl.filter(lambda x: 'o' in x.name)
         self.assertEqual(
-            map(lambda x: x.name, cl2.files),
-            ['one.txt', 'four.txt', 'two.txt']
+            sorted(list(map(lambda x: x.name, cl2.files))),
+            sorted(['one.txt', 'four.txt', 'two.txt'])
         )
         return
 
@@ -174,15 +174,15 @@ class TestCollection(unittest.TestCase):
         cl.add_metadata(newproperty='value')
         self.assertEqual(cl.metadata.newproperty, 'value')
         self.assertEqual(cl.newproperty, 'value')
-        self.assertEqual(map(lambda x: x.newproperty, cl), ['value']*len(cl))
+        self.assertEqual(list(map(lambda x: x.newproperty, cl)), ['value']*len(cl))
         # adding via dictionary
         cl.add_metadata({'newerproperty': 'newervalue'})
         self.assertEqual(cl.metadata.newerproperty, 'newervalue')
         self.assertEqual(cl.newerproperty, 'newervalue')
-        self.assertEqual(map(lambda x: x.newerproperty, cl), ['newervalue']*len(cl))
+        self.assertEqual(list(map(lambda x: x.newerproperty, cl)), ['newervalue']*len(cl))
         # adding via setattr on class
         cl.newestproperty = 'newestvalue'
         self.assertEqual(cl.metadata.newestproperty, 'newestvalue')
         self.assertEqual(cl.newestproperty, 'newestvalue')
-        self.assertEqual(map(lambda x: x.newestproperty, cl), ['newestvalue']*len(cl))
+        self.assertEqual(list(map(lambda x: x.newestproperty, cl)), ['newestvalue']*len(cl))
         return
