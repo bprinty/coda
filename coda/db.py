@@ -26,7 +26,7 @@ from coda.utils import DocRequire, keywords
 # ------
 __base__ = os.path.dirname(os.path.realpath(__file__))
 __default_config__ = os.path.join(__base__, '.coda')
-__user_config__ = os.path.join(os.getenv("HOME"), '.coda')
+__user_config__ = os.path.join(os.path.expanduser("~"), '.coda')
 
 
 # database config
