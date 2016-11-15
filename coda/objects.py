@@ -8,9 +8,7 @@
 
 # compatibility
 # -------------
-from past.builtins import cmp, basestring
-from builtins import map, filter, range, object
-from future.utils import with_metaclass
+from future_builtins import map, filter
 
 
 # imports
@@ -23,7 +21,7 @@ from coda.utils import DocRequire, keywords
 
 # files
 # -----
-class File(with_metaclass(DocRequire, object)):
+class File(object):
     """
     Abstract class for file object.
 
@@ -32,6 +30,7 @@ class File(with_metaclass(DocRequire, object)):
         metadata (dict): Dictionary with common metadata for collection,
             specified a priori.
     """
+    __metaclass__ = DocRequire
 
     def __init__(self, path, metadata={}):
         assert os.path.exists(path), 'Specified file path does not exist!'
@@ -149,7 +148,7 @@ class File(with_metaclass(DocRequire, object)):
         return
 
 
-class Collection(with_metaclass(DocRequire, object)):
+class Collection(object):
     """
     Abstract class for collection of file objects.
 
@@ -159,6 +158,7 @@ class Collection(with_metaclass(DocRequire, object)):
         metadata (dict): Dictionary with common metadata for collection,
             specified a priori.
     """
+    __metaclass__ = DocRequire
     __file_base__ = File
 
     def __init__(self, files, metadata={}):

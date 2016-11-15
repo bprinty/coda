@@ -8,7 +8,7 @@
 
 # compatibility
 # -------------
-from builtins import map, object
+from future_builtins import map
 
 
 # imports
