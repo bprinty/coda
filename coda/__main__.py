@@ -36,8 +36,21 @@ def accumulate(func):
     return _
 
 
-# methods
+# args
+# ----
+parser = argparse.ArgumentParser()
+parser.add_argument('-c', '--config', help='Path to config file to use for default coda options.', default=None)
+subparsers = parser.add_subparsers()
+
+
+# version
 # -------
+parser_version = subparsers.add_parser('version')
+parser_version.set_defaults(func=lambda x: sys.exit(coda.__version__))
+
+
+# status
+# ------
 def status(args):
     """
     Check status of running databases and configuration.
@@ -54,45 +67,56 @@ def status(args):
         sys.stderr.write('could not connect!\n\n')
     return
 
+parser_status = subparsers.add_parser('status')
+parser_status.set_defaults(func=status)
 
+
+# list
+# ----
 def listdir(args):
     """
     List tracked files under the user's current directory.
     """
-    cwd = os.getcwd().replace('/', '\/')
-    cl = coda.find({'path': {'$regex': '^' + cwd + '.*'}})
-    if cl is not None:
-        sys.stdout.write(str(cl) + '\n')
+    wd = args.path.replace('/', '\/')
+    cl = coda.find({'path': {'$regex': '^' + wd + '.*'}})
+    if os.path.isdir(args.path):
+        if cl is not None:
+            sys.stdout.write('\n'.join(map(str, cl.files)) + '\n')
+    else:
+        fi = cl[0]
+        md = fi.metadata.json()
+        if len(md) != 0:
+            del md['_id']
+            sys.stdout.write(fi.path + '\n')
+            sys.stdout.write(json.dumps(md, sort_keys=True, indent=4) + '\n')
+        else:
+            sys.stdout.write('No metadata found for {}\n'.format(fi.name))
     return
 
+parser_list = subparsers.add_parser('list')
+parser_list.add_argument('path', nargs='?', help='Directory to list tracked files for.', default=os.getcwd())
+parser_list.set_defaults(func=listdir)
 
+
+# find
+# ----
 def find(args):
     """
     Find files with associated keys and metadata.
     """
     cl = coda.find({args.key: args.value})
     if cl is not None:
-        sys.stdout.write(str(cl) + '\n')
+        sys.stdout.write('\n'.join(map(str, cl.files)) + '\n')
     return
 
-
-@accumulate
-def show(args):
-    """
-    Show metadata about tracked file.
-    """
-    fi = coda.File(args.collection[0].path)
-    for fi in args.collection:
-        md = fi.metadata.json()
-        if len(md) != 0:
-            del md['_id']
-            sys.stdout.write('\n' + fi.path + '\n')
-            sys.stdout.write(json.dumps(md, sort_keys=True, indent=4) + '\n')
-        else:
-            sys.stdout.write('No metadata found for {}\n'.format(fi.name))
-    return
+parser_find = subparsers.add_parser('find')
+parser_find.add_argument('key', help='Metadata key to search with.')
+parser_find.add_argument('value', help='Metadata value to search for.')
+parser_find.set_defaults(func=find)
 
 
+# add
+# ---
 @accumulate
 def add(args):
     """
@@ -101,7 +125,13 @@ def add(args):
     coda.add(args.collection)
     return
 
+parser_add = subparsers.add_parser('add')
+parser_add.add_argument('files', nargs='+', help='File or collection to add to tracking.')
+parser_add.set_defaults(func=add)
 
+
+# delete
+# ------
 @accumulate
 def delete(args):
     """
@@ -110,7 +140,13 @@ def delete(args):
     coda.delete(args.collection)
     return
 
+parser_delete = subparsers.add_parser('delete')
+parser_delete.add_argument('files', nargs='+', help='File or collection to add to tracking.')
+parser_delete.set_defaults(func=delete)
 
+
+# tag 
+# ---
 @accumulate
 def tag(args):
     """
@@ -120,68 +156,10 @@ def tag(args):
     coda.add(args.collection)
     return
 
-
-# args
-# ----
-parser = argparse.ArgumentParser()
-parser.add_argument('-c', '--config', help='Path to config file to use for default coda options.', default=None)
-subparsers = parser.add_subparsers()
-
-
-# version
-# -------
-parser_version = subparsers.add_parser('version')
-parser_version.set_defaults(func=lambda x: sys.exit(coda.__version__))
-
-
-# status
-# ------
-parser_status = subparsers.add_parser('status')
-parser_status.set_defaults(func=status)
-
-
-# show
-# ----
-parser_show = subparsers.add_parser('show')
-parser_show.add_argument('files', nargs='+', help='File or collection to list metadata for.')
-parser_show.set_defaults(func=show)
-
-
-# list
-# ----
-parser_list = subparsers.add_parser('list')
-parser_list.add_argument('path', nargs='?', help='Directory to list tracked files for.')
-parser_list.set_defaults(func=listdir)
-
-
-# find
-# ----
-parser_find = subparsers.add_parser('find')
-parser_find.add_argument('key', help='Metadata key to search with.')
-parser_find.add_argument('value', help='Metadata value to search for.')
-parser_find.set_defaults(func=find)
-
-
-# add
-# ---
-parser_add = subparsers.add_parser('add')
-parser_add.add_argument('files', nargs='+', help='File or collection to add to tracking.')
-parser_add.set_defaults(func=add)
-
-
-# delete
-# ------
-parser_delete = subparsers.add_parser('delete')
-parser_delete.add_argument('files', nargs='+', help='File or collection to add to tracking.')
-parser_delete.set_defaults(func=delete)
-
-
-# tag
-# ---
 parser_tag = subparsers.add_parser('tag')
-parser_tag.add_argument('files', nargs='+', help='File or collection to tag with metadata.')
 parser_tag.add_argument('key', help='Metadata key to tag file with.')
 parser_tag.add_argument('value', help='Metadata value to tag file with.')
+parser_tag.add_argument('files', nargs='+', help='File or collection to tag with metadata.')
 parser_tag.set_defaults(func=tag)
 
 

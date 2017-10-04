@@ -14,8 +14,8 @@ __tests__ = os.path.dirname(os.path.realpath(__file__))
 __resources__ = os.path.join(__tests__, 'resources')
 
 
-# seed data
-# ---------
+# seed
+# ----
 simple = filetree(os.path.join(__resources__, 'simple'))
 source = filetree(os.path.join(__tests__, '..', 'coda'))
 fl = []
@@ -38,8 +38,8 @@ for item in source.prune(r".*.py$").filelist():
 cl = coda.Collection(files=fl)
 
 
-# package-level setUp and tearDown
-# --------------------------------
+# setup/teardown
+# --------------
 def setUp():
     global __user_config__
     cwd = os.path.dirname(os.path.realpath(__file__))

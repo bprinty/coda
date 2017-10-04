@@ -41,6 +41,10 @@ class TestEntryPoints(unittest.TestCase):
         coda.add(fi)
         res = self.call('list')
         self.assertTrue('tests/test_coda.py' in res)
+        res = self.call('list', path)
+        self.assertTrue('"cohort": "testing"' in res)
+        self.assertTrue('"ext": "py"' in res)
+        self.assertTrue('"type": "source"' in res)
         coda.delete(fi)
         return
 
@@ -56,22 +60,7 @@ class TestEntryPoints(unittest.TestCase):
         self.assertTrue('tests/test_coda.py' in res)
         coda.delete(fi)
         return
-
-    def test_show(self):
-        path = os.path.realpath(__file__)
-        fi = coda.File(path=path, metadata={
-            'cohort': 'testing',
-            'ext': 'py',
-            'type': 'source'
-        })
-        coda.add(fi)
-        res = self.call('show', path)
-        self.assertTrue('"cohort": "testing"' in res)
-        self.assertTrue('"ext": "py"' in res)
-        self.assertTrue('"type": "source"' in res)
-        coda.delete(fi)
-        return
-
+        
     def test_add(self):
         path = os.path.realpath(__file__)
         self.call('add', path)
@@ -91,7 +80,7 @@ class TestEntryPoints(unittest.TestCase):
 
     def test_tag(self):
         path = os.path.realpath(__file__)
-        self.call('tag', path, 'cohort', 'testing')
+        self.call('tag', 'cohort', 'testing', path)
         fi = coda.find_one({'cohort': 'testing'})
         self.assertEqual(fi.path, path)
         coda.delete(fi)

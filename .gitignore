@@ -48,3 +48,6 @@ assets
 # VirtualEnvironments
 .env
 .venv
+
+# testing
+.cache

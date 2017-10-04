@@ -13,7 +13,7 @@ import unittest
 import os
 import json
 import subprocess
-from nose_parameterized import parameterized
+from parameterized import parameterized
 
 from . import __resources__
 import coda
@@ -112,6 +112,9 @@ class TestCollection(unittest.TestCase):
         self.assertEqual(cl.filelist, [one, two, three])
         with self.assertRaises(AttributeError):
             self.assertEqual(cl.metadata.content, None)
+
+        cl = coda.Collection(os.path.join(__resources__, 'simple', '*.txt'))
+        self.assertEqual(len(cl.files), 1)
         return
 
     def test_properties_filetree(self):

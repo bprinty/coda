@@ -13,7 +13,7 @@ import unittest
 import os
 import json
 import subprocess
-from nose_parameterized import parameterized
+from parameterized import parameterized
 
 import coda
 
@@ -31,11 +31,6 @@ class TestSession(unittest.TestCase):
         self.assertEqual(coda.db.session.db.__class__.__name__, 'Database')
         return
 
-    def test_options(self):
-        coda.options(host='newhost')
-        self.assertEqual(coda.db.session.host, 'newhost')
-        return
-
 
 # searching
 # ---------
@@ -46,7 +41,7 @@ class TestFind(unittest.TestCase):
 
     @parameterized.expand([
         ({'type': 'text'}, 4),
-        ({'type': 'source'}, 3),
+        ({'type': 'source'}, 2),
     ])
     def test_find(self, query, count):
         ret = coda.find(query)
@@ -71,7 +66,7 @@ class TestDeletes(unittest.TestCase):
     """
 
     @parameterized.expand([
-        (os.path.realpath(__file__)),
+        (os.path.realpath(__file__),),
     ])
     def test_add_delete(self, path):
         # add

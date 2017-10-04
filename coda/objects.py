@@ -9,9 +9,7 @@
 # imports
 # -------
 import os
-from gems import composite, filetree
-
-from coda.utils import DocRequire, keywords
+from gems import composite, filetree, DocRequire, keywords
 
 
 # files
@@ -61,6 +59,12 @@ class File(object):
         Proxy for returning metadata about specified file.
         """
         return self._metadata
+
+    def __repr__(self):
+        """
+        Return string representation for file (file path).
+        """
+        return str(self)
 
     def __str__(self):
         """
@@ -173,10 +177,10 @@ class Collection(object):
 
     def __init__(self, files, metadata={}):
         if isinstance(files, str):
-            assert os.path.exists(files), 'Specified path does not exist!'
-            assert os.path.isdir(files), 'Specified path is not a directory! Use the File object for a file.'
             ft = filetree(files)
             self.files = [self.__file_base__(x) for x in ft.filelist()]
+            if len(self.files) == 0:
+                raise AssertionError('Could not find any files for collection!')
         else:
             self.files = files
         self._metadata = composite(metadata)
@@ -234,11 +238,17 @@ class Collection(object):
         """
         return self.__class__(files=list(filter(func, self.files)))
 
+    def __repr__(self):
+        """
+        Return string representation for collection (list of file paths).
+        """
+        return str(self)
+
     def __str__(self):
         """
         Return string representation for collection (list of file paths).
         """
-        return '\n'.join(list(map(str, self.files)))
+        return '[' + ',\n '.join(map(str, self.files)) + ']'
 
     def __lt__(self, other):
         """
