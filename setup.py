@@ -23,6 +23,7 @@ with open('requirements.txt', 'r') as reqs:
     requirements = map(lambda x: x.rstrip(), reqs.readlines())
 
 test_requirements = [
+    'parameterized',
     'pytest',
     'pytest-runner'
 ]

@@ -48,6 +48,8 @@ assets
 # VirtualEnvironments
 .env
 .venv
+.py2
+.py3
 
 # testing
 .cache
