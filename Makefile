@@ -43,6 +43,7 @@ test-py2:
 	virtualenv .py2
 	. .py2/bin/activate && \
 	pip install -r requirements.txt	&& \
+	pip install pytest pytest-runner && \
 	python setup.py test
 	rm -rf .py2
 
@@ -51,6 +52,7 @@ test-py3:
 	virtualenv -p python3 .py3
 	. .py3/bin/activate && \
 	pip install -r requirements.txt && \
+	pip install pytest pytest-runner && \
 	python setup.py test
 	rm -rf .py3
 
