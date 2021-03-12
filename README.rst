@@ -2,10 +2,10 @@ coda
 ====
 
 Coda is a file system organizer, designed for data scientists who frequently deal
-with large amounts of heterogeneous data. In this age where data rules all, being able to
-efficiently search and label those data is paramount to maintaining productivity. Coda
-allows you to tag files with arbitrary metadata, so that you can stay organized when
-managing/analyzing large datasets over time. 
+with large amounts of heterogeneous data. Being able to efficiently search and label
+data during the course of algorithm development is paramount to maintaining productivity.
+Coda allows you to tag files with arbitrary metadata, so that you can stay organized when
+managing/analyzing large datasets over time.
 
 As a quick example of how coda might be useful for organizing an arbitrary dataset,
 see the following example (see the `documentation <http://coda.readthedocs.io/en/latest/>`_
